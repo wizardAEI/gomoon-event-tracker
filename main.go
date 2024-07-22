@@ -77,6 +77,7 @@ func main() {
 			switch text {
 			case "isDragged":
 				if isDragged {
+					isDragged = false
 					os.Stdout.WriteString("true\n")
 				} else {
 					os.Stdout.WriteString("false\n")
