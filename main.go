@@ -5,6 +5,7 @@ import (
 	"math"
 	"os"
 	"strings"
+	"time"
 
 	hook "github.com/robotn/gohook"
 )
@@ -56,12 +57,18 @@ func main() {
 			return
 		} else {
 			isDragged = true
+			time.AfterFunc(3*time.Second, func() {
+				isDragged = false
+			})
 		}
 	})
 	preMouseDown := [2]int{-1, -1}
 	hook.Register(hook.MouseDown, []string{}, func(e hook.Event) {
 		if math.Abs(float64(e.X)-float64(preMouseDown[0])) <= 5 && math.Abs(float64(e.Y)-float64(preMouseDown[1])) <= 5 {
 			isDragged = true
+			time.AfterFunc(3*time.Second, func() {
+				isDragged = false
+			})
 		}
 		if e.Button == hook.MouseMap["left"] {
 			preMouseDown[0], preMouseDown[1] = int(e.X), int(e.Y)

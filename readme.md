@@ -4,7 +4,7 @@
 
 arm64 架构：
 
-安装 1.22.5 ( `gvm install go1.22.4` )
+安装 1.22.5 ( `gvm install go1.22.5` )
 
 ```bash
 gvm use --default go1.22.5
@@ -13,12 +13,9 @@ go build
 
 amd64 架构：
 
-使用 Rosetta 启动 amd 终端安装 go 1.22.4 (安装amd版本的go `gvm install go1.22.4 -B`)
-
-更改 go.mod go 1.22.4
+使用 Rosetta 启动 amd 终端安装 go 1.22.5 (安装amd版本的go `gvm install go1.22.5 -B`)
 
 ```bash
-gvm use go1.22.4
 go build -o eventTracker_x64 main.go
 ```
 
