@@ -2,41 +2,55 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"math"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 
 	hook "github.com/robotn/gohook"
 )
 
+// FEAT:
+// 1. ctrl+c+启动键 快速问答
+// 2. 预测用户是否选中文本
 func main() {
 
+	// 读取启动参数
+	key := flag.String("key", "", "the key to be pressed")
+	ctrlKey := "ctrl"
+
+	if runtime.GOOS == "darwin" {
+		ctrlKey = "cmd"
+	}
+	flag.Parse()
 	// 记录快速两次 ctrl+c 按键
 	preStamp := int64(0)
 	stamp := int64(0)
 	defer hook.End()
 
-	// 查看Access
-
-	// win
-	hook.Register(hook.KeyDown, []string{"ctrl", "c"}, func(e hook.Event) {
-		stamp = e.When.UnixNano()
-		// 间隔小于 0.4s 认为是快速两次按键
-		if stamp-preStamp < 400000000 {
-			os.Stdout.WriteString("multi-copy")
-		}
-		preStamp = stamp
-	})
-	// mac
-	hook.Register(hook.KeyDown, []string{"cmd", "c"}, func(e hook.Event) {
-		stamp = e.When.UnixNano()
-		// 间隔小于 0.4s 认为是快速两次按键
-		if stamp-preStamp < 400000000 {
-			os.Stdout.WriteString("multi-copy")
-		}
-		preStamp = stamp
-	})
+	if *key == "C" {
+		hook.Register(hook.KeyDown, []string{ctrlKey, "c"}, func(e hook.Event) {
+			stamp = e.When.UnixNano()
+			// 间隔小于 0.4s 认为是快速两次按键
+			if stamp-preStamp < 400000000 {
+				os.Stdout.WriteString("quickly-ans")
+			}
+			preStamp = stamp
+		})
+	} else {
+		hook.Register(hook.KeyDown, []string{ctrlKey, "c"}, func(e hook.Event) {
+			preStamp = e.When.UnixNano()
+		})
+		hook.Register(hook.KeyDown, []string{ctrlKey, strings.ToLower(*key)}, func(e hook.Event) {
+			stamp = e.When.UnixNano()
+			// 间隔小于 0.8s 认为是快速两次按键
+			if stamp-preStamp < 800000000 {
+				os.Stdout.WriteString("quickly-ans")
+			}
+		})
+	}
 
 	// 预测用户是否选中文本
 	isDragged := false
